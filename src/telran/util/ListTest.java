@@ -2,8 +2,14 @@ package telran.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
@@ -13,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 class ListTest {
 private static final int N_NUMBERS_PERFORMANCE = 1_000_0000;
+private static final String BASE_PACKAGE = "java.util.";
 private List<Integer> numbers;
 private List<String> strings;
 Integer initialNumbers[] = {10, 20, 40};
@@ -23,25 +30,49 @@ String initialStrings[] = {"name1", "name2"};
 		strings = getInitialStrings();
 	}
 
-	private List<String> getInitialStrings() {
+	private List<String> getInitialStrings() throws Exception {
 		//FIXME getting class name for testing from a config file
+		/*
 		List<String> res = new ArrayList<>();
 		//List<String> res = new LinkedList<>();
 		for (int i = 0; i < initialStrings.length; i++) {
 			res.add(initialStrings[i]);
 		}
+		*/
+		String className = getClassName();
+		List<String> res  =  (List<String>) Class.forName(className).getConstructor().newInstance();//List<String> res = new LinkedList<>();
+		for (int i = 0; i < initialStrings.length; i++) {
+			res.add(initialStrings[i]);
+		}
+		System.out.println("className="+className+"   "+res);
 		return res;
 	}
 
-	private List<Integer> getInitialNumbers() {
+	private List<Integer> getInitialNumbers() throws Exception {
 		//FIXME  getting class name for testing from a config file
+		/*
 		//List<Integer> res = new ArrayList<>();
 		List<Integer> res = new LinkedList<>();
 		for (int num: initialNumbers) {
 			res.add(num);
 		}
+		*/
+		String className = getClassName();
+		List<Integer> res  =  (List<Integer>) Class.forName(className).getConstructor().newInstance();
+		for (int num : initialNumbers) {
+			res.add(num);
+		}
+		System.out.println("className="+className+"   "+res);
 		return res;
 	}
+
+	private String getClassName() throws Exception {
+		//TODO DONE
+		File file = new File ("ConfigFile.txt");
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		return BASE_PACKAGE + br.readLine();
+	}
+	/*
 	@Test
 	void sortedSearchExist() {
 		assertEquals(0, numbers.sortedSearch(10));
@@ -55,6 +86,7 @@ String initialStrings[] = {"name1", "name2"};
 		assertEquals(-3, numbers.sortedSearch(25));
 		assertEquals(-4, numbers.sortedSearch(45));
 	}
+	*/
 
 	@Test
 	void testGet() {
@@ -72,12 +104,14 @@ String initialStrings[] = {"name1", "name2"};
 		int inserted2 = -8;
 		int inserted4 = 1000;
 		Integer[] expected = {inserted0, 10, inserted2, 20, 40, inserted4};
+		/*
 		assertTrue(numbers.add(0, inserted0));
 		assertTrue( numbers.add(2, inserted2));
 		assertTrue( numbers.add(5, inserted4));
 		assertArrayEquals(expected, getArrayFromList(numbers));
 		assertFalse(numbers.add(7, 1000));
 		assertFalse( numbers.add(-1, 1000));
+		*/
 	}
 	@Test
 	void testRemove() {
@@ -176,16 +210,16 @@ String initialStrings[] = {"name1", "name2"};
 	}
 	@Test
 	void indexOfPredicate() {
-		assertEquals(2, numbers.indexOf(n -> n > 25) );
-		assertEquals(0, numbers.indexOf(n -> n < 15));
-		assertEquals(-1,numbers.indexOf(n -> n % 3 == 0));
+//		assertEquals(2, numbers.indexOf(n -> n > 25) );
+//		assertEquals(0, numbers.indexOf(n -> n < 15));
+//		assertEquals(-1,numbers.indexOf(n -> n % 3 == 0));
 	}
 	@Test
 	void lastIndexOfPredicate() {
 		numbers.add(40);
-		assertEquals(3, numbers.lastIndexOf(n -> n > 25));
-		assertEquals(0, numbers.lastIndexOf(n -> n < 15));
-		assertEquals(-1, numbers.lastIndexOf(n -> n < 0));
+//		assertEquals(3, numbers.lastIndexOf(n -> n > 25));
+//		assertEquals(0, numbers.lastIndexOf(n -> n < 15));
+//		assertEquals(-1, numbers.lastIndexOf(n -> n < 0));
 	}
 	@Test
 	void removeIfTest() {
@@ -250,8 +284,8 @@ String initialStrings[] = {"name1", "name2"};
 		numbers.add(10);
 		numbers.add(20);
 		Integer expected[] = {10, 10, 20, 20, 40, 40};
-		numbers.sort();
-		assertArrayEquals(expected, getArrayFromList(numbers));
+//		numbers.sort();
+//		assertArrayEquals(expected, getArrayFromList(numbers));
 	}
 	@Test
 	void sortComparatorTest() {
@@ -273,6 +307,7 @@ String initialStrings[] = {"name1", "name2"};
 		assertEquals(-1, list.indexOf(divider4Predicate));
 		
 	}
+	/*
 	@Test
 	void removeByIteratorTest() {
 		Iterator<Integer> it = numbers.iterator();
@@ -282,6 +317,7 @@ String initialStrings[] = {"name1", "name2"};
 		}
 		assertArrayEquals(new Integer[0], getArrayFromList(numbers));
 	}
+	*/
 
 	private void fillListPerformance(List<Integer> list) {
 		for (int i = 0; i < N_NUMBERS_PERFORMANCE ; i++) {
